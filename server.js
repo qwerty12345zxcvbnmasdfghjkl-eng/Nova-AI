@@ -1,5 +1,6 @@
 const express = require('express');
 const cors = require('cors');
+const serverless = require('serverless-http');
 require('dotenv').config();
 
 const app = express();
@@ -11,7 +12,6 @@ app.post('/api/chat', async (req, res) => {
   try {
     const userMessage = req.body.message;
     
-    // OpenRouter API ko request bhejna
     const response = await fetch("https://openrouter.ai/api/v1/chat/completions", {
       method: "POST",
       headers: {
@@ -19,7 +19,6 @@ app.post('/api/chat', async (req, res) => {
         "Content-Type": "application/json"
       },
       body: JSON.stringify({
-        // Yahan aap koi bhi free model use kar sakte hain
         "model": "meta-llama/llama-3-8b-instruct:free", 
         "messages": [{ "role": "user", "content": userMessage }]
       })
@@ -38,5 +37,5 @@ app.post('/api/chat', async (req, res) => {
   }
 });
 
-const PORT = process.env.PORT || 3000;
-app.listen(PORT, () => console.log(`Server chal raha hai port ${PORT} par`));
+// Netlify ke liye serverless export
+module.exports.handler = serverless(app);
